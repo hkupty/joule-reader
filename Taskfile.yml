@@ -1,0 +1,14 @@
+---
+version: '3'
+
+tasks:
+  build:
+    sources:
+      - ./cli/**/*.go
+      - ./pkg/**/*.go
+    cmds:
+      - go build -buildvcs=false -o joule-reader ./cli
+  install:
+    deps: [build]
+    cmds:
+      - cp joule-reader ~/.local/bin/
