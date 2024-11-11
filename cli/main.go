@@ -8,7 +8,8 @@ import (
 )
 
 func main() {
-	args := os.Args
-	f := pkg.ReadFile(args[1])
-	fmt.Println(f)
+	for _, arg := range os.Args[1:] {
+		f := pkg.ReadFile(arg)
+		fmt.Println(f)
+	}
 }
