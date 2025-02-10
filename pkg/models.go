@@ -46,6 +46,13 @@ func (t Testcase) String() string {
 	sb.WriteString(strconv.FormatFloat(t.Time, 'f', -1, 64))
 	sb.WriteString("s)\n")
 
+	if t.Failure.Message != "" {
+		sb.WriteString(t.Failure.Type)
+		sb.WriteString("\n")
+		sb.WriteString(t.Failure.Message)
+		sb.WriteString("\n")
+	}
+
 	return sb.String()
 }
 
@@ -58,6 +65,12 @@ func (t Testsuite) String() string {
 	sb.WriteString(strconv.Itoa(t.Tests))
 	sb.WriteString("\n\tFailures: ")
 	sb.WriteString(strconv.Itoa(t.Failures))
+	for _, testcase := range t.Testcase {
+		if testcase.Failure.Type != "" {
+			sb.WriteString("\n\t\t")
+			sb.WriteString(testcase.String())
+		}
+	}
 	sb.WriteString("\n\tErrors: ")
 	sb.WriteString(strconv.Itoa(t.Errors))
 	sb.WriteString("\n\tSkipped: ")
