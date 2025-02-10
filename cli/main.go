@@ -1,34 +1,32 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"os"
 
-	"github.com/alexflint/go-arg"
 	"github.com/hkupty/joule-reader/pkg"
 )
 
-var args struct {
-	FailuresOrErrors bool     `arg:"-x"`
-	Files            []string `arg:"positional"`
-}
+var failOnError = flag.Bool("x", false, "Fail executable if any of the passed files contain errors or failures")
+var verbose = flag.Bool("v", false, "Print all test suites and test cases independently of them containing errors or not")
 
 func main() {
 	ret := 0
-	arg.MustParse(&args)
-	for _, arg := range args.Files {
+	flag.Parse()
+	for _, arg := range flag.Args() {
 		f := pkg.ReadFile(arg)
 		hasFailures := f.Failures > 0
 		hasErrors := f.Errors > 0
 
 		switch {
-		case args.FailuresOrErrors && (hasFailures || hasErrors):
+		case *failOnError && (hasFailures || hasErrors):
 			ret += 1
-			fmt.Println(f)
-		case !args.FailuresOrErrors:
-			fmt.Println(f)
 		}
 
+		if *verbose || (hasFailures || hasErrors) {
+			fmt.Println(f)
+		}
 	}
 
 	os.Exit(ret)
